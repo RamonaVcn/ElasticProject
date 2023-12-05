@@ -1,4 +1,3 @@
-SWAGGER CODE:
 openapi: 3.0.0
 info:
   title: Movie Search API
@@ -68,6 +67,7 @@ components:
         release_date:
           type: string
           format: date
+
 
 
 MAPPING:
