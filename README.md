@@ -68,3 +68,18 @@ components:
         release_date:
           type: string
           format: date
+
+
+MAPPING:
+PUT /movies
+{
+  "mappings": {
+    "properties": {
+      "id": {"type": "integer"},
+      "title": {"type": "text"},
+      "genres": {"type": "text"},
+      "release_date": {"type": "date", "format": "yyyy-MM-dd"}
+    }
+  }
+}
+
