@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Table</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .table-container {
+            overflow-x: auto;
+        }
+        .table {
+            width: 100%;
+            max-width: none;
+        }
+        .resizable-table {
+            overflow: hidden;
+            position: relative;
+            border: 1px solid gray;
+        }
+        .resize-handle {
+            width: 10px;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            cursor: ew-resize;
+            z-index: 999;
+        }
+        .resize-handle-left {
+            left: 0;
+        }
+        .resize-handle-right {
+            right: 0;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <h1 class="text-center">Data from Elasticsearch</h1>
+        <div class="resizable-table" id="resizable-table">
+            <div class="resize-handle resize-handle-left" id="resize-handle-left"></div>
+            <div class="resize-handle resize-handle-right" id="resize-handle-right"></div>
+            <div id="data-container"></div> <!-- Container for the table -->
+        </div>
+        <button id="load-more" class="btn btn-primary mt-3">Show More</button>
+    </div>
+
+    <script>
+        let rows = 10;
+
+        function loadData() {
+            $.get('/load_data?rows=' + rows, function(data) {
+                $('#data-container').html(data);
+            });
+        }
+
+        $('#load-more').click(function() {
+            rows += 10; // Increase the number of rows to fetch
+            loadData();
+        });
+
+        // Initial load
+        loadData();
+
+        // Resizing logic
+        let startWidth, startX, isResizing = false, resizableTable = document.getElementById('resizable-table');
+
+        function initResize(e, isLeft) {
+            startX = e.clientX;
+            startWidth = resizableTable.offsetWidth;
+            isResizing = true;
+            document.addEventListener('mousemove', e => doDrag(e, isLeft), false);
+            document.addEventListener('mouseup', stopDrag, false);
+        }
+
+        function doDrag(e, isLeft) {
+            if (!isResizing) return;
+            let offset = (isLeft ? startX - e.clientX : e.clientX - startX);
+            let newWidth = startWidth + offset;
+            resizableTable.style.width = newWidth + 'px';
+        }
+
+        function stopDrag() {
+            isResizing = false;
+            document.removeEventListener('mousemove', doDrag, false);
+            document.removeEventListener('mouseup', stopDrag, false);
+        }
+
+        document.getElementById('resize-handle-left').addEventListener('mousedown', e => initResize(e, true));
+        document.getElementById('resize-handle-right').addEventListener('mousedown', e => initResize(e, false));
+    </script>
+</body>
+</html>
