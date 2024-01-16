@@ -1,0 +1,213 @@
+openapi: 3.0.0
+info:
+  title: Movie Search API
+  description: API for searching and managing movie data
+  version: 1.0.0
+
+paths:
+  /movies:
+    get:
+      summary: Get a list of movies
+      parameters:
+        - name: query
+          in: query
+          description: Filter movies by title
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                movies:
+                  - id: 1
+                    title: "Inception"
+                    genres: "Sci-Fi, Action"
+                    release_date: "2010-07-16"
+                  - id: 2
+                    title: "The Dark Knight"
+                    genres: "Action, Crime, Drama"
+                    release_date: "2008-07-18"
+
+  /movies/{movieId}:
+    parameters:
+      - name: movieId
+        in: path
+        required: true
+        description: ID of the movie
+        schema:
+          type: integer
+    get:
+      summary: Get details of a specific movie
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                id: 1
+                title: "Inception"
+                genres: "Sci-Fi, Action"
+                release_date: "2010-07-16"
+        '404':
+          description: Movie not found
+
+  /movies/add:
+    post:
+      summary: Add a new movie
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieInput'
+      responses:
+        '201':
+          description: Movie added successfully
+          content:
+            application/json:
+              example:
+                id: 3
+                message: "Movie added successfully"
+
+  /movies/{movieId}/update:
+    put:
+      summary: Update details of a specific movie
+      parameters:
+        - name: movieId
+          in: path
+          required: true
+          description: ID of the movie
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieInput'
+      responses:
+        '200':
+          description: Movie updated successfully
+          content:
+            application/json:
+              example:
+                id: 1
+                message: "Movie updated successfully"
+        '404':
+          description: Movie not found
+
+  /movies/{movieId}/delete:
+    delete:
+      summary: Delete a specific movie
+      parameters:
+        - name: movieId
+          in: path
+          required: true
+          description: ID of the movie
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Movie deleted successfully
+        '404':
+          description: Movie not found
+
+  /movies/top-rated:
+    get:
+      summary: Get the top-rated movies
+      parameters:
+        - name: count
+          in: query
+          description: Number of top-rated movies to retrieve
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                movies:
+                  - id: 1
+                    title: "Inception"
+                    genres: "Sci-Fi, Action"
+                    release_date: "2010-07-16"
+                    rating: 8.7
+                  - id: 2
+                    title: "The Dark Knight"
+                    genres: "Action, Crime, Drama"
+                    release_date: "2008-07-18"
+                    rating: 9.0
+
+  /movies/recommendations:
+    get:
+      summary: Get movie recommendations
+      parameters:
+        - name: movieId
+          in: query
+          description: ID of the movie for recommendations
+          schema:
+            type: integer
+          required: true
+        - name: count
+          in: query
+          description: Number of recommended movies to retrieve
+          schema:
+            type: integer
+            default: 5
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                movies:
+                  - id: 3
+                    title: "Interstellar"
+                    genres: "Sci-Fi, Drama"
+                    release_date: "2014-11-05"
+                    rating: 8.6
+                  - id: 4
+                    title: "Dunkirk"
+                    genres: "Action, Drama, History"
+                    release_date: "2017-07-13"
+                    rating: 7.8
+
+components:
+  schemas:
+    Movie:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        genres:
+          type: string
+        release_date:
+          type: string
+          format: date
+
+    MovieInput:
+      type: object
+      properties:
+        title:
+          type: string
+        genres:
+          type: string
+        release_date:
+          type: string
+          format: date
+
+    Keyword:
+      type: object
+      properties:
+        keyword:
+          type: string
+
+    NestedStructure:
+      type: object
+      properties:
+        nested_field:
+          type: string
